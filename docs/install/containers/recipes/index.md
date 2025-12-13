@@ -247,10 +247,3 @@ This command starts a separate Zope instance connected to the same database.
 
 You cannot debug a running FileStorage-based setup because the database file is locked.
 Use ZEO or RelStorage to open an interactive shell while the site is running.
-
-
-
-
-
-
-
