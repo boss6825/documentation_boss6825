@@ -170,3 +170,87 @@ docker compose run backend pack
 The above command assumes that the service that runs the Plone instance is named `backend`.
 Otherwise replace `backend` with your container's name.
 
+## Open an interactive debugging shell when Docker Compose
+
+When you need to debug a running Plone site, you must run a second Zope instance connected to the same database. This is required because an interactive console starts its own WSGI process. 
+
+This recipe uses two Zope services sharing a single ZEO instance.  
+It allows you to open an interactive shell without stopping the running site.
+
+### Example docker-compose.yml
+
+Save the following configuration as `docker-compose.yml`.
+
+```yaml
+services:
+  client1:
+    container_name: client1
+    ports:
+      - "8081:8080"
+    extends:
+      service: base
+    command: start
+
+  debug:
+    profiles:
+      - debugging
+    container_name: debug
+    extends:
+      service: base
+    command: console
+
+  base:
+    image: plone/server-dev:6.1.1
+    container_name: base
+    restart: always
+    command: pwd
+    environment:
+      ZEO_ADDRESS: zeo:8100
+    depends_on:
+      - zeo
+
+  zeo:
+    image: plone/plone-zeo:6.0.0
+    container_name: zeo
+    restart: always
+    volumes:
+      - data:/data
+    ports:
+      - "8100:8100"
+
+volumes:
+  data: {}
+
+```
+
+Now start the docker in detached mode 
+
+```bash
+docker compose up -d
+```
+
+If the site does not yet exist in the data volume, create it once.
+
+```bash
+docker exec \
+  -e SITE_ID="Plone" \
+  zope ./docker-entrypoint.sh create-classic
+```
+
+Open the interactive shell
+
+```bash
+docker compose run --rm debug
+```
+
+This command starts a separate Zope instance connected to the same database.
+
+You cannot debug a running FileStorage-based setup because the database file is locked.
+Use ZEO or RelStorage to open an interactive shell while the site is running.
+
+
+
+
+
+
+
