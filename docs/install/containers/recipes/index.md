@@ -224,7 +224,7 @@ volumes:
 
 ```
 
-Now start the docker in detached mode 
+Now start the docker in detached mode.
 
 ```bash
 docker compose up -d
