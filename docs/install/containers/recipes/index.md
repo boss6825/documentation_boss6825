@@ -180,7 +180,7 @@ It allows you to open an interactive shell without stopping the running site.
 
 ### Example `docker-compose.yml`
 
-Save the following configuration as `docker-compose.yml`.
+Save the following configuration as {file}`docker-compose.yml`.
 
 ```yaml
 services:
