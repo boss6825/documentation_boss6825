@@ -225,21 +225,22 @@ volumes:
 
 Now start the docker in detached mode.
 
-```bash
+```shell
 docker compose up -d
 ```
 
-If the site does not yet exist in the data volume, create it once.
+If the site does not yet exist in the data volume, create it.
+It will then be available for future sessions.
 
-```bash
+```shell
 docker exec \
   -e SITE_ID="Plone" \
   zope ./docker-entrypoint.sh create-classic
 ```
 
-Open the interactive shell
+Open the interactive shell.
 
-```bash
+```shell
 docker compose run --rm debug
 ```
 
