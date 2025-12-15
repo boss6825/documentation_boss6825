@@ -172,7 +172,8 @@ Otherwise replace `backend` with your container's name.
 
 ## Open an interactive debugging shell with Docker Compose
 
-When you need to debug a running Plone site, you must run a second Zope instance connected to the same database. This is required because an interactive console starts its own WSGI process. 
+When you need to debug a running Plone site, you must run a second Zope instance connected to the same database.
+This is required because an interactive console starts its own WSGI process. 
 
 This recipe uses two Zope services sharing a single ZEO instance.  
 It allows you to open an interactive shell without stopping the running site.
