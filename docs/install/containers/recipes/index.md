@@ -170,7 +170,7 @@ docker compose run backend pack
 The above command assumes that the service that runs the Plone instance is named `backend`.
 Otherwise replace `backend` with your container's name.
 
-## Open an interactive debugging shell when Docker Compose
+## Open an interactive debugging shell with Docker Compose
 
 When you need to debug a running Plone site, you must run a second Zope instance connected to the same database. This is required because an interactive console starts its own WSGI process. 
 
