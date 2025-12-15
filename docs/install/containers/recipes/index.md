@@ -221,7 +221,6 @@ services:
 
 volumes:
   data: {}
-
 ```
 
 Now start the docker in detached mode.
