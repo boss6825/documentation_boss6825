@@ -178,7 +178,7 @@ This is required because an interactive console starts its own WSGI process.
 This recipe uses two Zope services sharing a single ZEO instance.  
 It allows you to open an interactive shell without stopping the running site.
 
-### Example docker-compose.yml
+### Example `docker-compose.yml`
 
 Save the following configuration as `docker-compose.yml`.
 
