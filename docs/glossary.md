@@ -535,6 +535,7 @@ LIF
 Language Independent Folder
     A folder containing static assets, such as images and files, that are shared across all supported languages in a Plone site.
     The folder's contents are independent of any language.
+    Contents added to such a folder in a given language tree will be automatically replicated to all other folders in different language trees.
 
 PO file
 `.po`
