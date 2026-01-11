@@ -170,3 +170,7 @@ The DCWorkflow events are low-level events that can tell you a lot about the pre
 `zope.processlifetime.IProcessStarting` is triggered after the component registry has been loaded and Zope is starting up.
 
 `zope.processlifetime.IDatabaseOpened` is triggered after the main ZODB database has been opened.
+
+## Related content
+
+-   {doc}`/backend/content-types/index`

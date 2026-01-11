@@ -87,3 +87,8 @@ For example, if object `A` contains object `B`, and object `A` has a property `x
 -   About traversal: [Zope Developers Handbook, Chapter Object Publishing](https://zope.readthedocs.io/en/latest/zdgbook/ObjectPublishing.html)
 -   About acquisition: [Zope Developers Handbook, Chapter Acquisition](https://zope.readthedocs.io/en/latest/zdgbook/Acquisition.html)
 ```
+
+## Related content
+
+-   {doc}`/classic-ui/views`
+-   {doc}`/backend/zodb`
