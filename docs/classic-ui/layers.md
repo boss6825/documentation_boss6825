@@ -314,3 +314,9 @@ from zope.interface import directlyProvides
 
 directlyProvides(self.portal.REQUEST, IThemeLayer)
 ```
+
+## Related content
+    
+-   {doc}`/classic-ui/views`
+-   {doc}`/classic-ui/viewlets`
+-   {doc}`/admin-guide/add-ons`

@@ -273,3 +273,10 @@ In your `configure.zcml`:
 
 </configure>
 ```
+
+## Related content
+    
+-   {doc}`/backend/schemas`
+-   {doc}`/classic-ui/layers`
+-   {doc}`/backend/fields`
+-   {doc}`/backend/widgets`
