@@ -230,4 +230,3 @@ Indexes the `Subject` field which contains a list of object categories.
 ## Related content
 
 -   {doc}`/backend/search`
--   {doc}`/backend/content-types/index`
