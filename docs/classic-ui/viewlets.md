@@ -1051,6 +1051,8 @@ def fix_tinymce_viewlets(site):
 
 ## Related content
    
--   {doc}`/classic-ui/views`
 -   {doc}`/classic-ui/layers`
+-   {doc}`/classic-ui/templates`
+-   {doc}`/classic-ui/views`
+
 

@@ -317,6 +317,7 @@ directlyProvides(self.portal.REQUEST, IThemeLayer)
 
 ## Related content
     
--   {doc}`/classic-ui/views`
+-   {doc}`/classic-ui/theming/index`
+-   {doc}`/classic-ui/theming/create-add-on`
+-   {doc}`/classic-ui/templates`
 -   {doc}`/classic-ui/viewlets`
--   {doc}`/admin-guide/add-ons`

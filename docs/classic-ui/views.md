@@ -1124,5 +1124,6 @@ One workaround to avoid this mess is to use `aq_inner` when accessing `self.obj`
 
 ## Related content
 
--   {doc}`/classic-ui/viewlets`
 -   {doc}`/classic-ui/layers`
+-   {doc}`/classic-ui/templates`
+-   {doc}`/classic-ui/viewlets`

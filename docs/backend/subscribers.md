@@ -173,4 +173,6 @@ The DCWorkflow events are low-level events that can tell you a lot about the pre
 
 ## Related content
 
+-   {doc}`/backend/behaviors`
 -   {doc}`/backend/content-types/index`
+

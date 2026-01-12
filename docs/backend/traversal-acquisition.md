@@ -90,5 +90,7 @@ For example, if object `A` contains object `B`, and object `A` has a property `x
 
 ## Related content
 
+-   {doc}`/backend/portal-actions`
+-   {doc}`/backend/security`
 -   {doc}`/classic-ui/views`
--   {doc}`/backend/zodb`
+

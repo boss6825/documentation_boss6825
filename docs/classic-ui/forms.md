@@ -276,7 +276,6 @@ In your `configure.zcml`:
 
 ## Related content
     
--   {doc}`/backend/schemas`
--   {doc}`/classic-ui/layers`
 -   {doc}`/backend/fields`
+-   {doc}`/backend/schemas`
 -   {doc}`/backend/widgets`
