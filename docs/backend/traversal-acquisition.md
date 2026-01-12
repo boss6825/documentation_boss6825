@@ -30,7 +30,7 @@ If not explicitly given, at the end a default view is looked up.
 This can be a registered page template, a callable view class, or a REST API endpoint.
 
 ```{seealso}
-{ref}`Chapter Views <classic-ui-views-label>`
+{doc}`/classic-ui/views`
 ```
 
 In code, traversal can be achieved by using the `restrictedTraverse` and `unrestrictedTraverse` methods of content objects.
