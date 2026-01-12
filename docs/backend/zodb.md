@@ -74,8 +74,3 @@ Indexing and caching
 ## Further reading
 
 More information can be found at the official [ZODB website](https://zodb.org/en/latest/).
-
-## Related content
-
--   {doc}`/deployment/components`
--   {doc}`/admin-guide/configure-zope`
