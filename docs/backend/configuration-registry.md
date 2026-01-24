@@ -572,6 +572,5 @@ def get_setting_safely():
 ## Related content
 
 -   {doc}`/backend/control-panels`
--   {doc}`/backend/schemas`
 -   [`plone.registry` on PyPI](https://pypi.org/project/plone.registry/)
 -   [`plone.app.registry` on PyPI](https://pypi.org/project/plone.app.registry/)
