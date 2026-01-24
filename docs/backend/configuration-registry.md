@@ -374,3 +374,204 @@ You can create records without defining an interface first.
 ```
 
 
+#### Modify existing records
+
+To modify a record that already exists, reference it by name.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<registry>
+    <record name="plone.site_title">
+        <value>My New Site Title</value>
+    </record>
+</registry>
+```
+
+
+### The `purge` attribute
+
+The `purge` attribute controls whether existing values are cleared before importing new ones.
+This is especially important for list fields.
+
+```xml
+<!-- Replace all existing values -->
+<value key="enabled_types" purge="true">
+    <element>Document</element>
+</value>
+
+<!-- Add to existing values -->
+<value key="enabled_types" purge="false">
+    <element>News Item</element>
+</value>
+```
+
+By default, `purge` is `true`, which means existing values are replaced.
+Set `purge="false"` to add to existing list values instead of replacing them.
+
+
+### The `remove` attribute
+
+You can remove records or values using the `remove` attribute.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<registry>
+    <!-- Remove a record entirely -->
+    <record name="my.package.old_setting" remove="true" />
+
+    <!-- Remove a value from a list -->
+    <records interface="my.package.interfaces.IMySettings">
+        <value key="enabled_types">
+            <element remove="true">OldType</element>
+        </value>
+    </records>
+</registry>
+```
+
+
+### Exporting registry settings
+
+You can export the current registry configuration using the {guilabel}`Management Interface`.
+
+1.  Navigate to the {guilabel}`Management Interface` (add `/manage_main` to your site URL).
+2.  Go to `portal_setup`.
+3.  Click the {guilabel}`Export` tab.
+4.  Select {guilabel}`Configuration Registry` from the list of export steps.
+5.  Click {guilabel}`Export selected steps`.
+
+This generates a `registry.xml` file with all current settings that you can use in your GenericSetup profile.
+
+
+### Uninstall profile
+
+When creating an uninstall profile for your add-on, you should clean up any registry records you created.
+
+In `profiles/uninstall/registry.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<registry>
+    <records interface="my.package.interfaces.IMySettings"
+             prefix="my.package"
+             remove="true" />
+</registry>
+```
+
+
+(backend-configuration-registry-field-types-label)=
+
+## Available field types
+
+The registry supports various field types from `plone.registry.field` and `zope.schema`.
+
+| Field Type | Description |
+|------------|-------------|
+| `Bool` | Boolean (true/false) value |
+| `Int` | Integer value |
+| `Float` | Floating-point number |
+| `TextLine` | Single line of text |
+| `Text` | Multi-line text |
+| `ASCIILine` | Single line of ASCII text |
+| `ASCII` | Multi-line ASCII text |
+| `Bytes` | Binary data |
+| `BytesLine` | Single line of binary data |
+| `Choice` | Selection from a vocabulary |
+| `List` | List of values |
+| `Tuple` | Tuple of values |
+| `Set` | Set of unique values |
+| `FrozenSet` | Immutable set of unique values |
+| `Dict` | Dictionary of key-value pairs |
+| `Date` | Date value |
+| `Datetime` | Date and time value |
+| `Time` | Time value |
+| `Timedelta` | Time duration |
+| `URI` | URI/URL value |
+| `SourceText` | Source code text |
+| `Object` | Nested object with its own schema |
+
+When defining fields in XML, use the full dotted name for the field type.
+
+```xml
+<record name="my.package.setting">
+    <field type="plone.registry.field.Int">
+        <title>My Integer Setting</title>
+        <min>0</min>
+        <max>100</max>
+    </field>
+    <value>50</value>
+</record>
+```
+
+
+(backend-configuration-registry-best-practices-label)=
+
+## Best practices
+
+### Use meaningful prefixes
+
+Always use a meaningful prefix for your registry records, typically your package name.
+This prevents conflicts with other packages and makes it easy to identify which package owns a setting.
+
+```python
+# Good
+prefix = "my.package"
+
+# Bad
+prefix = "settings"
+```
+
+
+### Provide default values
+
+Always provide sensible default values for your settings in `registry.xml`.
+This ensures your add-on works correctly immediately after installation.
+
+
+### Use interfaces for related settings
+
+Group related settings into an interface rather than creating individual records.
+This makes the settings easier to manage and access programmatically.
+
+
+### Document your settings
+
+Add clear titles and descriptions to your schema fields.
+These appear in the control panel and help administrators understand what each setting does.
+
+```python
+class IMySettings(Interface):
+    """Settings for my package."""
+
+    cache_timeout = schema.Int(
+        title="Cache timeout",
+        description="How long (in seconds) to cache results. Set to 0 to disable caching.",
+        default=300,
+        min=0,
+    )
+```
+
+
+### Handle missing settings gracefully
+
+When accessing registry settings, handle the case where the setting might not exist, especially during upgrades.
+
+```python
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
+
+
+def get_setting_safely():
+    registry = getUtility(IRegistry)
+    try:
+        return registry["my.package.new_setting"]
+    except KeyError:
+        return "default_value"
+```
+
+
+## Related content
+
+-   {doc}`/backend/control-panels`
+-   {doc}`/backend/schemas`
+-   [`plone.registry` on PyPI](https://pypi.org/project/plone.registry/)
+-   [`plone.app.registry` on PyPI](https://pypi.org/project/plone.app.registry/)
