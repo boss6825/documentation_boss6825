@@ -102,3 +102,160 @@ It provides:
 -   A control panel base class for creating settings forms
 -   The {guilabel}`Configuration Registry` control panel for viewing and editing settings
 -   Browser views for managing the registry
+
+
+### Creating settings for your add-on
+
+To create settings for your add-on, you need to:
+
+1.  Define a schema interface for your settings
+2.  Register the interface with the registry using GenericSetup
+3.  Optionally create a control panel to edit the settings
+
+
+#### Define a settings interface
+
+Create an interface that defines your settings using `zope.schema` fields.
+
+```python
+# In your package's interfaces.py
+from zope import schema
+from zope.interface import Interface
+
+
+class IMyPackageSettings(Interface):
+    """Settings for my package."""
+
+    enable_feature = schema.Bool(
+        title="Enable feature",
+        description="Turn this feature on or off",
+        default=True,
+    )
+
+    max_items = schema.Int(
+        title="Maximum items",
+        description="The maximum number of items to display",
+        default=10,
+        min=1,
+        max=100,
+    )
+
+    admin_email = schema.TextLine(
+        title="Admin email",
+        description="Email address for notifications",
+        required=False,
+    )
+```
+
+
+#### Register settings with GenericSetup
+
+Create a `registry.xml` file in your package's `profiles/default` directory.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<registry>
+    <records interface="my.package.interfaces.IMyPackageSettings"
+             prefix="my.package">
+        <!-- Set default values (optional) -->
+        <value key="enable_feature">True</value>
+        <value key="max_items">10</value>
+        <value key="admin_email"></value>
+    </records>
+</registry>
+```
+
+The `prefix` attribute determines the dotted name prefix for the records.
+With `prefix="my.package"`, the `enable_feature` field becomes `my.package.enable_feature` in the registry.
+
+
+#### Access settings in your code
+
+```python
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
+from my.package.interfaces import IMyPackageSettings
+
+
+def get_settings():
+    registry = getUtility(IRegistry)
+    return registry.forInterface(IMyPackageSettings)
+
+
+def is_feature_enabled():
+    settings = get_settings()
+    return settings.enable_feature
+```
+
+
+### Creating a control panel
+
+To provide a user interface for editing your settings, create a control panel.
+
+```python
+# In your package's controlpanel.py
+from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
+from plone.app.registry.browser.controlpanel import RegistryEditForm
+from plone.z3cform import layout
+from my.package.interfaces import IMyPackageSettings
+
+
+class MyPackageSettingsForm(RegistryEditForm):
+    """Control panel form for my package settings."""
+
+    schema = IMyPackageSettings
+    label = "My Package Settings"
+    description = "Configure settings for my package"
+
+
+MyPackageSettingsView = layout.wrap_form(
+    MyPackageSettingsForm,
+    ControlPanelFormWrapper
+)
+```
+
+Register the view and control panel in ZCML.
+
+```xml
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+    <browser:page
+        name="my-package-settings"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        class=".controlpanel.MyPackageSettingsView"
+        permission="cmf.ManagePortal"
+        />
+
+</configure>
+```
+
+Register the control panel configlet in `profiles/default/controlpanel.xml`.
+
+```xml
+<?xml version="1.0"?>
+<object name="portal_controlpanel"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+        i18n:domain="my.package">
+
+    <configlet
+        title="My Package Settings"
+        action_id="my.package.settings"
+        appId="my.package"
+        category="Products"
+        condition_expr=""
+        url_expr="string:${portal_url}/@@my-package-settings"
+        icon_expr=""
+        visible="True"
+        i18n:attributes="title">
+            <permission>Manage portal</permission>
+    </configlet>
+
+</object>
+```
+
+```{seealso}
+See the chapter {doc}`/backend/control-panels` for more information on creating control panels.
+```
+
+
