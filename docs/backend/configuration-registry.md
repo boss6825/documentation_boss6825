@@ -259,3 +259,118 @@ See the chapter {doc}`/backend/control-panels` for more information on creating 
 ```
 
 
+### Widget customization
+
+You can customize the widgets used in your control panel form by overriding the `updateFields()` and `updateWidgets()` methods.
+
+```python
+from plone.app.registry.browser.controlpanel import RegistryEditForm
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
+
+
+class MyPackageSettingsForm(RegistryEditForm):
+    schema = IMyPackageSettings
+    label = "My Package Settings"
+
+    def updateFields(self):
+        super().updateFields()
+        # Change the widget type for a field
+        self.fields["content_types"].widgetFactory = CheckBoxFieldWidget
+
+    def updateWidgets(self):
+        super().updateWidgets()
+        # Customize widget properties
+        self.widgets["description"].rows = 8
+        self.widgets["description"].style = "width: 100%;"
+```
+
+
+### Content type choice settings
+
+A common use case is allowing users to select which content types a feature applies to.
+
+```python
+from plone.autoform import directives as form
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from zope import schema
+from zope.interface import Interface
+
+
+class IMyPackageSettings(Interface):
+    """Settings with content type selection."""
+
+    form.widget(enabled_types=CheckBoxFieldWidget)
+    enabled_types = schema.List(
+        title="Enabled content types",
+        description="Select which content types this feature applies to",
+        required=False,
+        value_type=schema.Choice(
+            source="plone.app.vocabularies.ReallyUserFriendlyTypes"
+        ),
+    )
+```
+
+In `registry.xml`, you can set default values for the list.
+
+```xml
+<registry>
+    <records interface="my.package.interfaces.IMyPackageSettings"
+             prefix="my.package">
+        <value key="enabled_types" purge="false">
+            <element>Document</element>
+            <element>News Item</element>
+            <element>Folder</element>
+        </value>
+    </records>
+</registry>
+```
+
+
+(backend-configuration-registry-genericsetup-label)=
+
+## GenericSetup integration
+
+GenericSetup is an XML-based framework for importing and exporting Plone site configurations.
+The Configuration Registry integrates with GenericSetup through the `registry.xml` import and export step.
+
+
+### The `registry.xml` file
+
+The `registry.xml` file in a GenericSetup profile allows you to:
+
+-   Register interfaces and their fields as registry records
+-   Set values for existing records
+-   Create individual records without an interface
+
+
+#### Register an interface
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<registry>
+    <records interface="my.package.interfaces.IMySettings"
+             prefix="my.package.settings">
+        <value key="some_setting">default value</value>
+    </records>
+</registry>
+```
+
+
+#### Create individual records
+
+You can create records without defining an interface first.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<registry>
+    <record name="my.package.simple_setting">
+        <field type="plone.registry.field.TextLine">
+            <title>Simple Setting</title>
+            <description>A simple text setting</description>
+        </field>
+        <value>default value</value>
+    </record>
+</registry>
+```
+
+
