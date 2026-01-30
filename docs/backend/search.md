@@ -318,3 +318,190 @@ results = catalog(
     sort_order='ascending'
 )
 ```
+
+
+(backend-search-query-patterns-label)=
+
+### Common query patterns
+
+
+(backend-search-query-by-path-label)=
+
+#### Query by path
+
+Search for content within a specific folder:
+
+```python
+from plone import api
+
+# Find all content under /news
+results = api.content.find(path='/Plone/news')
+
+# Using a context object
+folder = api.content.get(path='/news')
+results = api.content.find(context=folder)
+```
+
+Limit the search depth:
+
+```python
+# Search only immediate children (depth=1)
+results = api.content.find(
+    context=folder,
+    depth=1
+)
+
+# Using the catalog directly with path dict
+catalog = api.portal.get_tool('portal_catalog')
+folder_path = '/'.join(folder.getPhysicalPath())
+results = catalog(
+    path={'query': folder_path, 'depth': 1}
+)
+```
+
+The `depth` parameter controls how deep to search:
+
+-   `depth=0`: Returns only the folder itself
+-   `depth=1`: Returns immediate children only
+-   `depth=2`: Returns children and grandchildren
+-   No depth specified: Returns all descendants
+
+
+(backend-search-query-by-type-label)=
+
+#### Query by content type
+
+Search for specific content types:
+
+```python
+from plone import api
+
+# Single type
+results = api.content.find(portal_type='Document')
+
+# Multiple types
+results = api.content.find(portal_type=['Document', 'News Item', 'Event'])
+```
+
+
+(backend-search-query-by-interface-label)=
+
+#### Query by interface
+
+Search for content implementing a specific interface:
+
+```python
+from plone import api
+from plone.dexterity.interfaces import IDexterityContent
+
+# Find all Dexterity content
+results = api.content.find(object_provides=IDexterityContent)
+
+# Using the interface identifier string
+results = api.content.find(
+    object_provides='plone.dexterity.interfaces.IDexterityContent'
+)
+```
+
+Searching by interface is more flexible than searching by `portal_type`.
+Multiple content types can implement the same interface, and new types added later will automatically be included in the results.
+
+
+(backend-search-query-by-date-label)=
+
+#### Query by date
+
+Date indexes support range queries:
+
+```python
+from plone import api
+from DateTime import DateTime
+
+# Items created today
+results = api.content.find(created=DateTime())
+
+# Items created in a date range
+catalog = api.portal.get_tool('portal_catalog')
+results = catalog(
+    created={
+        'query': (DateTime('2024-01-01'), DateTime('2024-12-31')),
+        'range': 'min:max'
+    }
+)
+
+# Items modified in the last 7 days
+from datetime import datetime, timedelta
+week_ago = DateTime(datetime.now() - timedelta(days=7))
+results = catalog(
+    modified={'query': week_ago, 'range': 'min'}
+)
+```
+
+Range operators:
+
+-   `min`: Values greater than or equal to the query value
+-   `max`: Values less than or equal to the query value
+-   `min:max`: Values between two query values (inclusive)
+
+
+(backend-search-query-multiple-values-label)=
+
+#### Query multiple values
+
+For `KeywordIndex` fields like `Subject`, you can search for multiple values:
+
+```python
+from plone import api
+
+# Items with ANY of the specified tags (default OR)
+catalog = api.portal.get_tool('portal_catalog')
+results = catalog(
+    Subject=['python', 'plone']
+)
+
+# Items with ALL specified tags (AND)
+results = catalog(
+    Subject={
+        'query': ['python', 'plone'],
+        'operator': 'and'
+    }
+)
+```
+
+
+(backend-search-fulltext-label)=
+
+#### Full-text search
+
+Use the `SearchableText` index for full-text searches:
+
+```python
+from plone import api
+
+# Simple text search
+results = api.content.find(SearchableText='documentation')
+
+# With boolean operators
+results = api.content.find(SearchableText='plone AND documentation')
+results = api.content.find(SearchableText='plone OR zope')
+```
+
+The `SearchableText` index aggregates text from multiple fields including title, description, and body text.
+See {doc}`/backend/indexing` for information on adding custom fields to `SearchableText`.
+
+
+## External search engines
+
+For large sites or advanced search requirements, you can integrate external search engines:
+
+-   [Solr](https://solr.apache.org/) - See [`collective.solr`](https://github.com/collective/collective.solr) and its [documentation](https://collectivesolr.readthedocs.io/en/latest/).
+-   [`collective.elasticsearch`](https://github.com/collective/collective.elasticsearch)
+-   [`collective.elastic.plone`](https://github.com/collective/collective.elastic.plone)
+
+See [Awesome Plone - Searching and Categorizing](https://github.com/collective/awesome-plone?tab=readme-ov-file#searching-and-categorizing) for a comprehensive list of search options.
+
+
+## Related content
+
+-   {doc}`/backend/indexing`
+-   {doc}`/plone.api/content`
